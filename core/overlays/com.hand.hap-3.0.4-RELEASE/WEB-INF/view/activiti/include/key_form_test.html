@@ -1,0 +1,66 @@
+<#include "../../include/header.html">
+<body>
+<div id="content-container">
+    <div id="page-content">
+        <div class="panel">
+            <form class="form-horizontal">
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">请假天数</label>
+                            <div class="col-sm-6">
+                                <input type="text" data-bind="value:model.numberOfDays" class="k-textbox" style="width: 100%;">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">开始时间</label>
+                            <div class="col-sm-6">
+                                <input data-role="datetimepicker" data-bind="value:model.startDate" class="k-datetimepicker" style="width: 100%;">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">事由</label>
+                            <div class="col-sm-6">
+                                <input type="text" data-bind="value:model.vacationMotivation" class="k-textbox" style="width: 100%;">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">意见</label>
+                            <div class="col-sm-6">
+                                <input type="text" data-bind="value:model.comment" class="k-textbox" style="width: 100%;">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">结果</label>
+                            <div class="col-sm-6">
+                                <input type="text" data-bind="value:model.approveResult" class="k-textbox" style="width: 100%;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    var viewModel = kendo.observable({
+        model:{}
+    });
+    kendo.bind($('#page-content'), viewModel);
+    $.get("${base.contextPath}/wfl/history/form/details/"+${RequestParameters.processInstanceId},function(data,status){
+       for(var i=0;i<data.total;i++){
+           viewModel.model.set(data.rows[i].name,data.rows[i].textValue);
+       }
+    });
+    </script>
+</body>
+</html>
