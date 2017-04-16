@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!--
+  ~ #{copyright}#
+  -->
+<mapper namespace="admin.order.mapper.OrderNumberMapper">
+    <resultMap id="baseResult" type="admin.order.dto.OrderNumber">
+        <id property="id" column="ID"/>
+        <result property="orderDate" column="ORDER_DATE"/>
+        <result property="number" column="NUMBER"/>
+    </resultMap>
+    
+    <select id="selectOnlyOrderNumber" resultMap="baseResult">
+        SELECT
+            ORDER_DATE,
+            NUMBER
+        FROM
+            ORDER_NUMBER
+        LIMIT 0,
+         1 FOR UPDATE
+    </select>
+
+    <update id="updateOrderNumberDate">
+        UPDATE ORDER_NUMBER
+        SET ORDER_DATE = NOW(),
+         NUMBER = 1
+    </update>
+
+    <update id="updateOrderNumberAdd">
+        UPDATE ORDER_NUMBER
+        SET NUMBER = NUMBER + 1
+    </update>
+</mapper>
