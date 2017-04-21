@@ -8,12 +8,15 @@
         <id property="id" column="ID"/>
         <result property="orderDate" column="ORDER_DATE"/>
         <result property="number" column="NUMBER"/>
+        <result property="objectVersionNumber" column="OBJECT_VERSION_NUMBER"/>
     </resultMap>
     
     <select id="selectOnlyOrderNumber" resultMap="baseResult">
         SELECT
+            ID,
             ORDER_DATE,
-            NUMBER
+            NUMBER,
+            OBJECT_VERSION_NUMBER
         FROM
             ORDER_NUMBER
         LIMIT 0,
@@ -28,6 +31,8 @@
 
     <update id="updateOrderNumberAdd">
         UPDATE ORDER_NUMBER
-        SET NUMBER = NUMBER + 1
+        SET NUMBER = NUMBER + 1,
+        OBJECT_VERSION_NUMBER=OBJECT_VERSION_NUMBER+1
+        WHERE OBJECT_VERSION_NUMBER=#{objectVersionNumber}
     </update>
 </mapper>

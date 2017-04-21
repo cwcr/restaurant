@@ -36,13 +36,15 @@ public class OrderNumberServiceImpl extends BaseServiceImpl<OrderNumber> impleme
         orderNumberMapper.updateOrderNumberDate();
     }
 
-    private void updateOrderNumberAdd(){
-        orderNumberMapper.updateOrderNumberAdd();
+    //进行乐观锁判断
+    private int updateOrderNumberAdd(OrderNumber orderNumber){
+        return orderNumberMapper.updateOrderNumberAdd(orderNumber);
     }
 
-    private void commit(){
+    //改用乐观锁来取代悲观锁提交
+    /*private void commit(){
         //orderNumberMapper.commit();
-    }
+    }*/
 
     @Override
     public String getOrderNumber(){
@@ -51,13 +53,16 @@ public class OrderNumberServiceImpl extends BaseServiceImpl<OrderNumber> impleme
         if(format.format(new Date(System.currentTimeMillis())).equals(format.format(one.getOrderDate()))){
             StringBuffer sb=new StringBuffer(format.format(one.getOrderDate()));
             sb.append(String.format(numberLengthFormat,one.getNumber()));
-            updateOrderNumberAdd();
-            commit();
+            int i = updateOrderNumberAdd(one);
+            if(i==0){//乐观锁生效 更新失败
+                return getOrderNumber();
+            }
+            //commit();
             return sb.toString();
         }
         else{
             updateOrderNumberDate();
-            commit();
+            //commit();
             return getOrderNumber();
         }
     }

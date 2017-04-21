@@ -11,6 +11,6 @@ import org.springframework.stereotype.Repository;
 public interface OrderNumberMapper extends Mapper<OrderNumber>{
     OrderNumber selectOnlyOrderNumber();
     void updateOrderNumberDate();
-    void updateOrderNumberAdd();
+    int updateOrderNumberAdd(OrderNumber orderNumber);
     //void commit();
 }
