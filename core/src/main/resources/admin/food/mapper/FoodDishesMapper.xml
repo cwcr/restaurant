@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!--
+  ~ #{copyright}#
+  -->
+<mapper namespace="admin.order.mapper.OrderNumberMapper">
+    <resultMap id="baseResult" type="admin.order.dto.OrderNumber">
+        <id property="id" column="ID"/>
+        <result property="foodName" column="FOOD_NAME"/>
+        <result property="foodPicture" column="FOOD_PICTURE"/>
+        <result property="foodDescription" column="FOOD_DESCRIPTION"/>
+        <result property="used" column="USED"/>
+        <result property="objectVersionNumber" column="OBJECT_VERSION_NUMBER"/>
+    </resultMap>
+
+    <select id="selectFoodDishesInThisCuisine" resultMap="baseResult">
+        SELECT
+            ID,
+            FOOD_NAME,
+            FOOD_PICTURE,
+            FOOD_DESCRIPTION,
+            USED,
+            CUISINE_ID,
+            OBJECT_VERSION_NUMBER
+        FROM
+            FOOD_DISHES
+        WHERE
+            CUISINE_ID = #{id};
+    </select>
+</mapper>

@@ -1,7 +1,9 @@
 package admin.food.controllers;
 
 import admin.food.dto.FoodCuisine;
+import admin.food.dto.FoodDishes;
 import admin.food.service.IFoodCuisineService;
+import admin.food.service.IFoodDishesService;
 import com.hand.hap.system.controllers.BaseController;
 import com.hand.hap.system.dto.ResponseData;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,9 @@ public class FoodCuisineController extends BaseController{
     @Autowired
     private IFoodCuisineService foodCuisineService;
 
+    @Autowired
+    private IFoodDishesService foodDishesService;
+
     @RequestMapping(path = "/submit",method = RequestMethod.POST)
     public ResponseData addCuisine(HttpServletRequest request,
                                    @RequestBody List<FoodCuisine> foodCuisines){
@@ -38,6 +43,10 @@ public class FoodCuisineController extends BaseController{
 
     @RequestMapping(path = "/delete",method = RequestMethod.DELETE)
     public ResponseData deleteCuisine(FoodCuisine foodCuisine){
-        return null;
+        List<FoodDishes> foodDishes = foodDishesService.selectFoodDishesInThisCuisine(foodCuisine);
+        if(foodDishes !=null||foodDishes.size()>0){
+            return new ResponseData(foodDishes);
+        }
+        return new ResponseData();
     }
 }

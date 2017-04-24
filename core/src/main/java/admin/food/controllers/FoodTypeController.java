@@ -15,28 +15,30 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
+@RequestMapping(path = "/food/type")
 public class FoodTypeController extends BaseController {
 
-    @Autowired  
-    private IFoodTypeService service;
+    @Autowired
+    private IFoodTypeService foodTypeService;
 
-
-    @RequestMapping(value = "/food/type/query")
-    public ResponseData query(FoodType dto, @RequestParam(defaultValue = DEFAULT_PAGE) int page,
-                              @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize, HttpServletRequest request) {
+    @RequestMapping(value = "/query")
+    public ResponseData query(FoodType dto,
+                              @RequestParam(defaultValue = DEFAULT_PAGE) int page,
+                              @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize,
+                              HttpServletRequest request) {
         IRequest requestContext = createRequestContext(request);
-        return new ResponseData(service.select(requestContext, dto, page, pageSize));
+        return new ResponseData(foodTypeService.select(requestContext, dto, page, pageSize));
     }
 
-    @RequestMapping(value = "/food/type/submit")
+    @RequestMapping(value = "/submit")
     public ResponseData update(HttpServletRequest request, @RequestBody List<FoodType> dto) {
         IRequest requestCtx = createRequestContext(request);
-        return new ResponseData(service.batchUpdate(requestCtx, dto));
+        return new ResponseData(foodTypeService.batchUpdate(requestCtx, dto));
     }
 
-    @RequestMapping(value = "/food/type/remove")
+    @RequestMapping(value = "/remove")
     public ResponseData delete(HttpServletRequest request, @RequestBody List<FoodType> dto) {
-        service.batchDelete(dto);
+        foodTypeService.batchDelete(dto);
         return new ResponseData();
     }
 }
