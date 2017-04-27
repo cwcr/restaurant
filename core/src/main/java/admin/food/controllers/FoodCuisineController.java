@@ -33,7 +33,7 @@ public class FoodCuisineController extends BaseController{
         return new ResponseData(foodCuisineService.batchUpdate(createRequestContext(request),foodCuisines));
     }
 
-    @RequestMapping(path = "/select",method = RequestMethod.GET)
+    @RequestMapping(path = "/query",method = RequestMethod.GET)
     public ResponseData getCuisine(HttpServletRequest request,
                                    FoodCuisine foodCuisine,
                                    int page,
@@ -47,6 +47,9 @@ public class FoodCuisineController extends BaseController{
         if(foodDishes !=null||foodDishes.size()>0){
             return new ResponseData(foodDishes);
         }
-        return new ResponseData();
+        else{
+            foodCuisineService.deleteByPrimaryKey(foodCuisine);
+            return new ResponseData();
+        }
     }
 }

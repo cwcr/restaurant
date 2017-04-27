@@ -1,0 +1,161 @@
+<#include "../../include/header.html">
+<body>
+    <script>
+        var viewModel=kendo.observable({
+            model:{},
+            createFunction:function () {
+                grid.addRow();
+            },
+            saveFunction:function () {
+                grid.saveChanges();
+            },
+            queryFunction:function () {
+                dataSource.read();
+            }
+        })
+    </script>
+    <div id="page-content">
+        <div class="row">
+            <div class="pull-left" id="toolbar-btn" style="padding-bottom:10px;">
+                <span class="btn btn-primary k-grid-add" style="float:left;margin-right:5px;" data-bind="click:createFunction"><i class="fa fa-plus-square" style="margin-right:3px;"></i>新建</span>
+                <span class="btn btn-success k-grid-save-changes"  style="float:left;margin-right:5px;" data-bind="click:saveFunction"><i class="fa fa-save" style="margin-right:3px;"></i>保存</span>
+                <span  onclick="deleteData()" class="btn btn-danger" style="float:left;"><i class="fa fa-trash-o" style="margin-right:3px;"></i>删除</span>
+            </div>
+
+            <div class="pull-right" id="query-form" style="padding-bottom:10px;">
+                <input  data-role="maskedtextbox" placeholder ="菜品名"type="text"  class="k-textbox"  type="text" style="float:left;width:150px;margin-right:5px;" data-bind="value:model.foodName"/>
+                <span  class="btn btn-primary" data-bind="click:queryFunction" type="submit"><i class="fa fa-search" style="margin-right:3px;"></i>查询</span>
+            </div>
+        </div>
+    </div>
+    <script>
+        kendo.bind($('#page-content'),viewModel)
+    </script>
+    <div id="grid"></div>
+    <script>
+        var basePath="${base.contextPath}/food/dishes"
+        var dataSource=new kendo.data.DataSource({
+            transport:{
+                read:{
+                    url:basePath+"/query",
+                    type:"GET",
+                    dataType:"json"
+                },
+                create:{
+                    url:basePath+"/submit",
+                    type:"POST",
+                    dataType:"json",
+                    contentType:"application/json"
+                },
+                update:{
+                    url:basePath+"/submit",
+                    type:"POST",
+                    dataType:"json",
+                    contentType:"application/json"
+                },
+                destroy:{
+                    url:basePath+"/delete",
+                    type:"DELETE",
+                    dataType:"json",
+                    contentType:"application/json"
+                },
+                parameterMap:function (options,type) {
+                    if(type!=='read'&&options.models){
+                        return JSON.stringify(Hap.prepareSubmitParameter(options,type));
+                    }
+                    else if(type==='read'){
+                        return Hap.prepareQueryParameter(viewModel.model.toJSON(),options)
+                    }
+                }
+            },
+            batch:true,
+            serverPaging:true,
+            pageSize:10,
+            schema:{
+                data:"rows",
+                total:"total",
+                model:{
+                    id:"id",
+                    fields:{
+                        foodName:{validation:{required:true}},
+                        cuisineId:{validation:{required:true}},
+                        used:{type:"boolean",defaultValue:"Y",checkedValue:"Y",uncheckedValue:"N"},
+                        foodPrice:{type:"number",
+                            validation: { required: true, min: 0 }
+                        },
+                        foodSpecialPrice:{type:"number",
+                            validation:{min: 0}
+                        },
+                        usedSpecial:{defaultValue: 'N',type: 'boolean',checkedValue:'Y',uncheckedValue:'N'}
+                    }
+                }
+            }
+        })
+
+        var grid=$("#grid").kendoGrid({
+            dataSource:dataSource,
+            navigatable:false,
+            height:"100%",
+            resizable:true,
+            scrollable:true,
+            selectable:"multiple,rowbox",
+            editable:true,
+            sortable:true,
+            pageable:{
+                pageSizes:[5,10,20,50,'All'],
+                refresh:true,
+                buttonCount:5
+            },
+            columns:[
+                {
+                    field:"foodName",
+                    title:"菜品名",
+                    width:"10%",
+                    attributes:{style:"text-align:center"}
+                }/*,{
+                    field:"foodDescription",
+                    title:"菜品描述",
+                    width:"60%",
+                    attributes:{style:"text-align:center"}
+                }*/,{
+                    field:"cuisineId",
+                    title:"菜系",
+                    width:"10%",
+                    attributes:{style:"text-align:center"}
+                },{
+                    title:"价格",
+                    field:"foodPrice",
+                    width:"10%",
+                    attributes:{style:"text-align:center"},
+                    format:"{0:c}"
+                },{
+                    title:"特价",
+                    field:"foodSpecialPrice",
+                    width:"10%",
+                    attributes:{style:"text-align:center"},
+                    format:"{0:c}"
+                },{
+                    field:"used",
+                    title:"是否出售",
+                    width:"8%",
+                    attributes:{style:"text-align:center"}
+                },{
+                    field:"usedSpecial",
+                    title:"是否特价",
+                    width:"8%",
+                    attributes:{style:"text-align:center"}
+                },{
+                    title:"详细",
+                    width:"10%",
+                    attributes:{style:"text-align:center"},
+                    template:function (rowdata) {
+                        return "<a href='#' onclick='editDishes("+rowdata.id+")' >详细</a>"
+                    }
+                }
+            ]
+        }).data('kendoGrid');
+
+        Hap.autoResizeGrid($("#grid"))
+    </script>
+</body>
+</html>

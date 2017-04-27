@@ -3,8 +3,8 @@
 <!--
   ~ #{copyright}#
   -->
-<mapper namespace="admin.order.mapper.OrderNumberMapper">
-    <resultMap id="baseResult" type="admin.order.dto.OrderNumber">
+<mapper namespace="admin.food.mapper.FoodDishesMapper">
+    <resultMap id="baseResult" type="admin.food.dto.FoodDishes">
         <id property="id" column="ID"/>
         <result property="foodName" column="FOOD_NAME"/>
         <result property="foodPicture" column="FOOD_PICTURE"/>

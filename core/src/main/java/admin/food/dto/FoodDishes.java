@@ -25,14 +25,20 @@ public class FoodDishes extends BaseDTO{
     @Column
     private String used;
     @Column
-    private Long foodCuisineId;
+    private Long cuisineId;
+    @Column
+    private Double foodPrice;
+    @Column
+    private Double foodSpecialPrice;
+    @Column
+    private String usedSpecial;
 
-    public Long getFoodCuisineId() {
-        return foodCuisineId;
+    public Long getCuisineId() {
+        return cuisineId;
     }
 
-    public FoodDishes setFoodCuisineId(Long foodCuisineId) {
-        this.foodCuisineId = foodCuisineId;
+    public FoodDishes setCuisineId(Long cuisineId) {
+        this.cuisineId = cuisineId;
         return this;
     }
 
@@ -78,6 +84,33 @@ public class FoodDishes extends BaseDTO{
 
     public FoodDishes setUsed(String used) {
         this.used = used;
+        return this;
+    }
+
+    public Double getFoodPrice() {
+        return foodPrice;
+    }
+
+    public FoodDishes setFoodPrice(Double foodPrice) {
+        this.foodPrice = foodPrice;
+        return this;
+    }
+
+    public Double getFoodSpecialPrice() {
+        return foodSpecialPrice;
+    }
+
+    public FoodDishes setFoodSpecialPrice(Double foodSpecialPrice) {
+        this.foodSpecialPrice = foodSpecialPrice;
+        return this;
+    }
+
+    public String getUsedSpecial() {
+        return usedSpecial;
+    }
+
+    public FoodDishes setUsedSpecial(String usedSpecial) {
+        this.usedSpecial = usedSpecial;
         return this;
     }
 }

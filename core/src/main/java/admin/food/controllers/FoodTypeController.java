@@ -21,7 +21,7 @@ public class FoodTypeController extends BaseController {
     @Autowired
     private IFoodTypeService foodTypeService;
 
-    @RequestMapping(value = "/query")
+    @RequestMapping(value = "/query",method = RequestMethod.GET)
     public ResponseData query(FoodType dto,
                               @RequestParam(defaultValue = DEFAULT_PAGE) int page,
                               @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize,
@@ -30,13 +30,13 @@ public class FoodTypeController extends BaseController {
         return new ResponseData(foodTypeService.select(requestContext, dto, page, pageSize));
     }
 
-    @RequestMapping(value = "/submit")
+    @RequestMapping(value = "/submit",method = RequestMethod.POST)
     public ResponseData update(HttpServletRequest request, @RequestBody List<FoodType> dto) {
         IRequest requestCtx = createRequestContext(request);
         return new ResponseData(foodTypeService.batchUpdate(requestCtx, dto));
     }
 
-    @RequestMapping(value = "/remove")
+    @RequestMapping(value = "/remove",method = RequestMethod.DELETE)
     public ResponseData delete(HttpServletRequest request, @RequestBody List<FoodType> dto) {
         foodTypeService.batchDelete(dto);
         return new ResponseData();

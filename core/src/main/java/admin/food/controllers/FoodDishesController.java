@@ -5,9 +5,7 @@ import admin.food.service.IFoodDishesService;
 import com.hand.hap.system.controllers.BaseController;
 import com.hand.hap.system.dto.ResponseData;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -21,7 +19,7 @@ public class FoodDishesController extends BaseController{
     @Autowired
     private IFoodDishesService foodDishesService;
 
-    @RequestMapping(path = "/select")
+    @RequestMapping(path = "/query",method = RequestMethod.GET)
     public ResponseData query(FoodDishes foodDishes,
                               @RequestParam(defaultValue = DEFAULT_PAGE) int page,
                               @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize,
@@ -29,13 +27,13 @@ public class FoodDishesController extends BaseController{
         return new ResponseData(foodDishesService.select(createRequestContext(request),foodDishes,page,pageSize));
     }
 
-    @RequestMapping(path = "/submit")
-    public ResponseData submit(HttpServletRequest request, List<FoodDishes> foodDishes){
+    @RequestMapping(path = "/submit",method = RequestMethod.POST)
+    public ResponseData submit(HttpServletRequest request, @RequestBody List<FoodDishes> foodDishes){
         return new ResponseData(foodDishesService.batchUpdate(createRequestContext(request),foodDishes));
     }
 
-    @RequestMapping(path = "/delete")
-    public ResponseData delete(List<FoodDishes> foodDishes){
+    @RequestMapping(path = "/delete",method = RequestMethod.DELETE)
+    public ResponseData delete(@RequestBody List<FoodDishes> foodDishes){
         foodDishesService.batchDelete(foodDishes);
         return new ResponseData();
     }
