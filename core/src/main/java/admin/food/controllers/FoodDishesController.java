@@ -19,7 +19,7 @@ public class FoodDishesController extends BaseController{
     @Autowired
     private IFoodDishesService foodDishesService;
 
-    @RequestMapping(path = "/query",method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     public ResponseData query(FoodDishes foodDishes,
                               @RequestParam(defaultValue = DEFAULT_PAGE) int page,
                               @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize,
@@ -27,14 +27,15 @@ public class FoodDishesController extends BaseController{
         return new ResponseData(foodDishesService.select(createRequestContext(request),foodDishes,page,pageSize));
     }
 
-    @RequestMapping(path = "/submit",method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST)
     public ResponseData submit(HttpServletRequest request, @RequestBody List<FoodDishes> foodDishes){
         return new ResponseData(foodDishesService.batchUpdate(createRequestContext(request),foodDishes));
     }
 
-    @RequestMapping(path = "/delete",method = RequestMethod.DELETE)
+    @RequestMapping(method = RequestMethod.DELETE)
     public ResponseData delete(@RequestBody List<FoodDishes> foodDishes){
         foodDishesService.batchDelete(foodDishes);
         return new ResponseData();
     }
+
 }

@@ -1,0 +1,143 @@
+<#include "../../include/header.html">
+<script type="text/javascript">
+    var viewModel = kendo.observable({
+        model: {},
+        createFunction: function () {
+            $('#grid').data('kendoGrid').addRow();
+        },
+        saveFunction: function () {
+            $('#grid').data('kendoGrid').saveChanges();
+        },
+        queryResource: function (e) {
+            $('#grid').data('kendoGrid').dataSource.page(1);
+        }
+    });
+</script>
+<body>
+<div id="page-content">
+    <div class="pull-left" id="toolbar-btn" style="padding-bottom:10px;">
+        <span class="btn btn-primary k-grid-add" style="float:left;margin-right:5px;" data-bind="click:createFunction"><@spring.message "hap.new"/></span>
+        <span class="btn btn-success k-grid-save-changes" data-bind="click:saveFunction" style="float:left;margin-right:5px;"><@spring.message "hap.save"/></span>
+        <span onclick="deleteData()" class="btn btn-danger" style="float:left;"><@spring.message "hap.delete"/></span>
+    </div>
+    <script>kendo.bind($('#toolbar-btn'), viewModel);</script>
+    <div class="pull-right" id="query-form" style="padding-bottom:10px;">
+            <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;" placeholder='<@spring.message "Cuisine.cuisineName"/>'
+                   data-bind="value:model.cuisineName" class="k-textbox">
+        <span class="btn btn-primary" style="float:left;width:70px" data-bind="click:queryResource" type="submit"><@spring.message "hap.query"/></span>
+        <div style="clear:both"></div>
+    </div>
+    <script>kendo.bind($('#query-form'), viewModel);</script>
+    <div style="clear:both">
+        <div id="grid"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    var BaseUrl = "${base.contextPath}";
+    dataSource = new kendo.data.DataSource({
+        transport: {
+            read: {
+                url: BaseUrl + "/food/cuisine",
+                type: "GET",
+                dataType: "json"
+            },
+            update: {
+                url: BaseUrl + "/food/cuisine",
+                type: "POST",
+                contentType: "application/json",
+                dataType: "json"
+            },
+            destroy: {
+                url: BaseUrl + "/food/cuisine",
+                type: "DELETE",
+                contentType: "application/json",
+                dataType: "json"
+            },
+            create: {
+                url: BaseUrl + "/food/cuisine",
+                type: "POST",
+                contentType: "application/json",
+                dataType: "json"
+            },
+            parameterMap: function (options, type) {
+                if (type !== "read" && options.models) {
+                    var datas = Hap.prepareSubmitParameter(options, type)
+                    if(type === "destroy"){
+                        return kendo.stringify(datas[0])
+                    }
+                    return kendo.stringify(datas);
+                } else if (type === "read") {
+                    return Hap.prepareQueryParameter(viewModel.model.toJSON(), options)
+                }
+            }
+        },
+        requestEnd:function (e) {
+            if(e.type==='destroy'){
+                dataSource.read();
+            }
+        },
+        batch: true,
+        serverPaging: true,
+        pageSize: 10,
+        schema: {
+            data: 'rows',
+            total: 'total',
+            model: {
+                id: "id",
+                fields: {
+                    cuisineName:{validation:{required:true}},
+                    cuisineDescription:{},
+                    used:{defaultValue: 'N',type: 'boolean',checkedValue:'Y',uncheckedValue:'N'},
+                }
+            }
+        }
+    });
+
+    $("#grid").kendoGrid({
+        dataSource:dataSource,
+        navigatable:false,
+        height:"100%",
+        resizable:true,
+        scrollable:true,
+        selectable:"rowbox",
+        editable:true,
+        sortable:true,
+        columnMenu:false,
+        columns: [
+            {
+                field: "cuisineName",
+                title: '<@spring.message "Cuisine.cuisineName"/>',
+                width: 120,
+                attributes:{style:"text-align:center"}
+            },
+                    {
+                field: "cuisineDescription",
+                title: '<@spring.message "Cuisine.cuisineDescription"/>',
+                width: 120,
+                attributes:{style:"text-align:center"}
+            },
+                    {
+                field: "used",
+                title: '<@spring.message "Cuisine.used"/>',
+                width: 120,
+                attributes:{style:"text-align:center"}
+            },
+        ],
+    });
+
+    function deleteData() {
+
+        Hap.deleteGridSelection({
+            grid: $('#grid')
+        });
+
+    }
+
+    Hap.autoResizeGrid("#grid");
+
+
+</script>
+</body>
+</html>

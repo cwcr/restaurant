@@ -1,4 +1,9 @@
 <#include "../../include/header.html">
+    <style>
+        .color-hint{
+            color: #828482;
+        }
+    </style>
 <body>
     <script>
         var viewModel=kendo.observable({
@@ -11,7 +16,24 @@
             },
             queryFunction:function () {
                 dataSource.read();
+            },
+            resetForm : function (e) {
+                var formData = viewModel.model.toJSON();
+                for (var k in formData) {
+                    viewModel.model.set(k, null);
+                }
             }
+        })
+
+        var cuisines={};
+
+        $.ajax({
+            url:"${base.contextPath}/food/cuisine/all",
+            method:"GET",
+            async:false,
+            success:function (data) {
+                cuisines=data.rows;
+           }
         })
     </script>
     <div id="page-content">
@@ -23,8 +45,20 @@
             </div>
 
             <div class="pull-right" id="query-form" style="padding-bottom:10px;">
-                <input  data-role="maskedtextbox" placeholder ="菜品名"type="text"  class="k-textbox"  type="text" style="float:left;width:150px;margin-right:5px;" data-bind="value:model.foodName"/>
-                <span  class="btn btn-primary" data-bind="click:queryFunction" type="submit"><i class="fa fa-search" style="margin-right:3px;"></i>查询</span>
+                <input  data-role="maskedtextbox" placeholder ="菜品名" type="text" style="float:left;width:150px;margin-right:5px;" data-bind="value:model.foodName"/>
+                <input  data-role="maskedtextbox" id="cuisineId" placeholder ="菜系"  type="text" style="width: 150px;float:left;margin-right:5px;" data-bind="value:model.cuisineId"/>
+                <script>
+                    $('#cuisineId').kendoDropDownList({
+                        dataTextField : "meaning",
+                        dataValueField: "value",
+                        dataSource    : cuisines,
+                        valuePrimitive:true,
+                        optionLabel:"菜系",
+                        optionLabelTemplate:kendo.template('<div class="color-hint">菜系</div>')
+                    });
+                </script>
+                <span class="btn btn-primary" data-bind="click:queryFunction" style="width: 80px;float:left;margin-right:5px;" type="submit"><i class="fa fa-search" style="margin-right:3px;"></i><@spring.message "hap.query"/></span>
+                <span class="btn btn-default" data-bind="click:resetForm" style="width: 80px;float:left;margin-right:5px;" type="button"><i class="fa fa-undo" style="margin-right:3px;"></i><@spring.message "hap.reset"/></span>
             </div>
         </div>
     </div>
@@ -37,18 +71,18 @@
         var dataSource=new kendo.data.DataSource({
             transport:{
                 read:{
-                    url:basePath+"/query",
+                    url:basePath,
                     type:"GET",
                     dataType:"json"
                 },
                 create:{
-                    url:basePath+"/submit",
+                    url:basePath,
                     type:"POST",
                     dataType:"json",
                     contentType:"application/json"
                 },
                 update:{
-                    url:basePath+"/submit",
+                    url:basePath,
                     type:"POST",
                     dataType:"json",
                     contentType:"application/json"
@@ -78,7 +112,8 @@
                     id:"id",
                     fields:{
                         foodName:{validation:{required:true}},
-                        cuisineId:{validation:{required:true}},
+                        cuisineId:{},
+                        foodDescription:{},
                         used:{type:"boolean",defaultValue:"Y",checkedValue:"Y",uncheckedValue:"N"},
                         foodPrice:{type:"number",
                             validation: { required: true, min: 0 }
@@ -101,6 +136,7 @@
             selectable:"multiple,rowbox",
             editable:true,
             sortable:true,
+            columnMenu:true,
             pageable:{
                 pageSizes:[5,10,20,50,'All'],
                 refresh:true,
@@ -112,16 +148,44 @@
                     title:"菜品名",
                     width:"10%",
                     attributes:{style:"text-align:center"}
-                }/*,{
-                    field:"foodDescription",
-                    title:"菜品描述",
-                    width:"60%",
-                    attributes:{style:"text-align:center"}
-                }*/,{
+                },{
                     field:"cuisineId",
                     title:"菜系",
                     width:"10%",
-                    attributes:{style:"text-align:center"}
+                    attributes:{style:"text-align:center"},
+                    template:function (dataItem) {
+                        cuisineId=dataItem.cuisineId;
+                        if(cuisineId==null||cuisineId===''){
+                            return "无菜系"
+                        }
+                        else{
+                            $.each(cuisines,function (i,n) {
+                                if((cuisineId.value||'').toLowerCase()===(cuisineId||'').toLowerCase()){
+                                    cuisineId=n.meaning;
+                                    return false;
+                                }
+                            })
+                            return cuisineId;
+                        }
+                    },
+                    editor:function (container, options) {
+                        $('<input/>')
+                                .appendTo(container)
+                                .kendoDropDownList({
+                                    dataTextField : "meaning",
+                                    dataValueField: "value",
+                                    dataSource    : cuisines,
+                                    valuePrimitive:true,
+                                    optionLabel:"无菜系",
+                                    optionLabelTemplate:kendo.template('<div">无菜系</div>')
+                                });
+                    }
+                },{
+                    field:"foodDescription",
+                    title:"菜品描述",
+                    width:"60%",
+                    attributes:{style:"text-align:center"},
+                    hidden:true
                 },{
                     title:"价格",
                     field:"foodPrice",
