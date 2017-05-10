@@ -32,6 +32,7 @@ public class FoodCuisineController extends BaseController{
     @RequestMapping(method = RequestMethod.POST)
     public ResponseData addCuisine(HttpServletRequest request,
                                    @RequestBody List<FoodCuisine> foodCuisines){
+        System.err.println(foodCuisines.get(0).getCuisineName());
         return new ResponseData(foodCuisineService.batchUpdate(createRequestContext(request),foodCuisines));
     }
 
@@ -65,20 +66,22 @@ public class FoodCuisineController extends BaseController{
 
     /**
      * 返回List<CodeValue> 匹配菜系 id/name
+     * 应该返回启用的菜系
      * @param request
      * @return
      */
     @RequestMapping(path = "/all",method = RequestMethod.GET)
     public ResponseData allDishes(HttpServletRequest request){
         ArrayList<CodeValue> codeValues = new ArrayList<>();
-        List<FoodCuisine> cuisines = foodCuisineService.selectAll(createRequestContext(request));
-        if(cuisines!=null){
+        List<FoodCuisine> cuisines = foodCuisineService.getUsedCuisine();
+        if(cuisines==null){
             return new ResponseData(codeValues);
         }
         for(FoodCuisine f:cuisines){
             CodeValue c = new CodeValue();
             c.setValue(f.getId().toString());
             c.setMeaning(f.getCuisineName());
+            codeValues.add(c);
         }
         return new ResponseData(codeValues);
     }

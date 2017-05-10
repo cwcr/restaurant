@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!--
+  ~ #{copyright}#
+  -->
+<mapper namespace="admin.food.mapper.FoodCuisineMapper">
+    <resultMap id="baseResult" type="admin.food.dto.FoodCuisine">
+        <id property="id" column="ID"/>
+        <result property="cuisineName" column="CUISINE_NAME"/>
+        <result property="cuisineDescription" column="CUISINE_DESCRIPTION"/>
+        <result property="used" column="USED"/>
+        <result property="objectVersionNumber" column="OBJECT_VERSION_NUMBER"/>
+    </resultMap>
+
+    <select id="getUsedCuisine" resultMap="baseResult">
+        SELECT
+        ID,
+        CUISINE_NAME,
+        CUISINE_DESCRIPTION,
+        USED,
+        OBJECT_VERSION_NUMBER
+        FROM
+        FOOD_CUISINE
+        WHERE
+        USED='Y'
+    </select>
+</mapper>

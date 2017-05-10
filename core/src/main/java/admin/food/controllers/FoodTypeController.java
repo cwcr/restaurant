@@ -4,6 +4,7 @@ package admin.food.controllers;
  * Created by 王也 on 2017/4/22.
  */
 import admin.food.dto.FoodType;
+import admin.food.service.IFoodDishesTypeService;
 import admin.food.service.IFoodTypeService;
 import com.hand.hap.core.IRequest;
 import com.hand.hap.system.controllers.BaseController;
@@ -21,7 +22,9 @@ public class FoodTypeController extends BaseController {
     @Autowired
     private IFoodTypeService foodTypeService;
 
-    @RequestMapping(value = "/query",method = RequestMethod.GET)
+    private IFoodDishesTypeService foodDishesTypeService;
+
+    @RequestMapping(method = RequestMethod.GET)
     public ResponseData query(FoodType dto,
                               @RequestParam(defaultValue = DEFAULT_PAGE) int page,
                               @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize,
@@ -30,15 +33,17 @@ public class FoodTypeController extends BaseController {
         return new ResponseData(foodTypeService.select(requestContext, dto, page, pageSize));
     }
 
-    @RequestMapping(value = "/submit",method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST)
     public ResponseData update(HttpServletRequest request, @RequestBody List<FoodType> dto) {
         IRequest requestCtx = createRequestContext(request);
         return new ResponseData(foodTypeService.batchUpdate(requestCtx, dto));
     }
 
-    @RequestMapping(value = "/remove",method = RequestMethod.DELETE)
+    @RequestMapping(method = RequestMethod.DELETE)
     public ResponseData delete(HttpServletRequest request, @RequestBody List<FoodType> dto) {
         foodTypeService.batchDelete(dto);
+        /*删除该菜系下和对应的菜品的相关关系*/
+        foodDishesTypeService.batchDeleteAboutType(dto);
         return new ResponseData();
     }
 }

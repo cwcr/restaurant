@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!--
+  ~ #{copyright}#
+  -->
+<mapper namespace="admin.food.mapper.FoodDishesTypeMapper">
+    <delete id="deleteAboutType" parameterType="java.lang.Long">
+        DELETE
+        FROM
+            FOOD_DISHES_TYPE
+        WHERE
+            TYPE_ID = #{id}
+    </delete>
+
+    <delete id="deleteAboutDishes" parameterType="java.lang.Long">
+        DELETE
+        FROM
+            FOOD_DISHES_TYPE
+        WHERE
+            DISHES_ID = #{id}
+    </delete>
+</mapper>

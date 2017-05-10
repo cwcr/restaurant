@@ -9,7 +9,11 @@
         <result property="foodName" column="FOOD_NAME"/>
         <result property="foodPicture" column="FOOD_PICTURE"/>
         <result property="foodDescription" column="FOOD_DESCRIPTION"/>
+        <result property="cuisineId" column="CUISINE_ID"/>
         <result property="used" column="USED"/>
+        <result property="foodPrice" column="FOOD_PRICE"/>
+        <result property="foodSpecialPrice" column="FOOD_SPECIAL_PRICE"/>
+        <result property="usedSpecial" column="USED_SPECIAL"/>
         <result property="objectVersionNumber" column="OBJECT_VERSION_NUMBER"/>
     </resultMap>
 
