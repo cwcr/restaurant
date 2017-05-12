@@ -2,10 +2,8 @@ package admin.food.dto;
 
 import com.hand.hap.system.dto.BaseDTO;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.List;
 
 /**
  * Created by 王也 on 2017/4/21.
@@ -25,19 +23,30 @@ public class FoodDishes extends BaseDTO{
     @Column
     private String used;
     @Column
-    private Long cuisineId;
+    private String cuisineId;
     @Column
     private Double foodPrice;
     @Column
     private Double foodSpecialPrice;
     @Column
     private String usedSpecial;
+    @Transient
+    private List<Long> types;
 
-    public Long getCuisineId() {
+    public List<Long> getTypes() {
+        return types;
+    }
+
+    public FoodDishes setTypes(List<Long> types) {
+        this.types = types;
+        return this;
+    }
+
+    public String getCuisineId() {
         return cuisineId;
     }
 
-    public FoodDishes setCuisineId(Long cuisineId) {
+    public FoodDishes setCuisineId(String cuisineId) {
         this.cuisineId = cuisineId;
         return this;
     }

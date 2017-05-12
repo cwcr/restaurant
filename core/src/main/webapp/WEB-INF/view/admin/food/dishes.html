@@ -33,20 +33,19 @@
             method:"GET",
             async:false,
             success:function (data) {
-                console.log(data)
                 cuisines=data.rows;
-                console.log(cuisines)
             }
         })
+        return cuisines;
     }
     $(document).ready(updateCuisines())
 </script>
 <div id="page-content">
     <div class="row">
         <div class="pull-left" id="toolbar-btn" style="padding-bottom:10px;">
-            <span class="btn btn-primary k-grid-add" style="float:left;margin-right:5px;" data-bind="click:createFunction"><i class="fa fa-plus-square" style="margin-right:3px;"></i>新建</span>
-            <span class="btn btn-success k-grid-save-changes"  style="float:left;margin-right:5px;" data-bind="click:saveFunction"><i class="fa fa-save" style="margin-right:3px;"></i>保存</span>
-            <span  onclick="deleteData()" class="btn btn-danger" style="float:left;"><i class="fa fa-trash-o" style="margin-right:3px;"></i>删除</span>
+            <span class="btn btn-primary k-grid-add" style="float:left;margin-right:5px;width: 80px;" data-bind="click:createFunction"><i class="fa fa-plus-square" style="margin-right:3px;"></i>新建</span>
+            <span class="btn btn-success k-grid-save-changes"  style="float:left;margin-right:5px;width: 80px;" data-bind="click:saveFunction"><i class="fa fa-save" style="margin-right:3px;"></i>保存</span>
+            <span  onclick="deleteData()" class="btn btn-danger"style="float:left;margin-right:5px;width: 80px;"><i class="fa fa-trash-o" style="margin-right:3px;"></i>删除</span>
         </div>
 
         <div class="pull-right" id="query-form" style="padding-bottom:10px;">
@@ -59,11 +58,15 @@
                     dataSource    : cuisines,
                     valuePrimitive:true,
                     optionLabel:"菜系",
-                    optionLabelTemplate:kendo.template('<div class="color-hint">菜系</div>')
+                    optionLabelTemplate:kendo.template('<div class="color-hint">菜系</div>'),
+                    open:function (e) {
+                        updateCuisines();
+                        $('#cuisineId').data('kendoDropDownList').setDataSource(cuisines);
+                    }
                 });
             </script>
-            <span class="btn btn-primary" data-bind="click:queryFunction" style="width: 80px;float:left;margin-right:5px;" type="submit"><i class="fa fa-search" style="margin-right:3px;"></i><@spring.message "hap.query"/></span>
-            <span class="btn btn-default" data-bind="click:resetForm" style="width: 80px;float:left;margin-right:5px;" type="button"><i class="fa fa-undo" style="margin-right:3px;"></i><@spring.message "hap.reset"/></span>
+            <span class="btn btn-primary" data-bind="click:queryFunction" style="float:left;margin-right:5px;width: 80px;" type="submit"><i class="fa fa-search" style="margin-right:3px;"></i><@spring.message "hap.query"/></span>
+            <span class="btn btn-default" data-bind="click:resetForm" style="float:left;margin-right:5px;width: 80px;" type="button"><i class="fa fa-undo" style="margin-right:3px;"></i><@spring.message "hap.reset"/></span>
         </div>
     </div>
 </div>
@@ -71,6 +74,7 @@
     kendo.bind($('#page-content'),viewModel)
 </script>
 <div id="grid"></div>
+<div id="dialogDetail"></div>
 <script>
     var basePath="${base.contextPath}/food/dishes"
     var dataSource=new kendo.data.DataSource({
@@ -159,30 +163,27 @@
                 width:"10%",
                 attributes:{style:"text-align:center"},
                 template:function (dataItem) {
-                    cuisineId=dataItem.cuisineId;
-                    if(cuisineId==null||cuisineId===''){
+                    var v=dataItem.cuisineId;
+                    $.each(cuisines,function (i,n) {
+                        if((n.value||'').toLowerCase()===(v||'').toLowerCase()){
+                            v=n.meaning;
+                            return false;
+                        }
+                    })
+                    if(v==null||v===''){
                         return "无菜系"
                     }
-                    else{
-                        $.each(cuisines,function (i,n) {
-                            if((cuisineId.value||'').toLowerCase()===(cuisineId||'').toLowerCase()){
-                                cuisineId=n.meaning;
-                                return false;
-                            }
-                        })
-                        return cuisineId;
-                    }
+                    return v;
                 },
                 editor:function (container, options) {
-                    $('<input/>')
+                    updateCuisines();
+                    $('<input name="' + options.field + '"/>')
                             .appendTo(container)
                             .kendoDropDownList({
-                                dataTextField : "meaning",
+                                dataTextField: "meaning",
                                 dataValueField: "value",
-                                dataSource    : cuisines,
-                                valuePrimitive:true,
-                                optionLabel:"无菜系",
-                                optionLabelTemplate:kendo.template('<div">无菜系</div>')
+                                dataSource: cuisines,
+                                optionLabel:"无菜系"
                             });
                 }
             },{
@@ -224,7 +225,30 @@
         ]
     }).data('kendoGrid');
 
-    Hap.autoResizeGrid($("#grid"))
+    Hap.autoResizeGrid($("#grid"));
+
+    function deleteData() {
+        Hap.deleteGridSelection({
+            grid: $('#grid')
+        });
+    }
+
+    function editDishes(id) {
+        var dialogCreate = $('#dialogDetail').kendoWindow({
+            width:1050,
+            height:550,
+            title:"详细",
+            visible:false,
+            iframe:true,
+            model:true,
+            content:"dishes_detail.html?id="+id,
+            close:function (e) {
+                dataSource.read();
+            }
+        }).data('kendoWindow');
+        dialogCreate.maximize();
+        dialogCreate.open();
+    }
 </script>
 </body>
 </html>

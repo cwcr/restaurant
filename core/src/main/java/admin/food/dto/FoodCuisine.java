@@ -1,5 +1,6 @@
 package admin.food.dto;
 
+import com.hand.hap.mybatis.annotation.Condition;
 import com.hand.hap.system.dto.BaseDTO;
 
 import javax.persistence.Column;
@@ -17,8 +18,14 @@ public class FoodCuisine extends BaseDTO{
     @GeneratedValue(generator = "IDENTITY")
     private Long id;
     @Column
+    @Condition(
+            operator = "LIKE"
+    )
     private String cuisineName;
     @Column
+    @Condition(
+            operator = "LIKE"
+    )
     private String cuisineDescription;
     @Column
     private String used;

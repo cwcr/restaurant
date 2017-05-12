@@ -8,10 +8,7 @@ import com.hand.hap.system.controllers.BaseController;
 import com.hand.hap.system.dto.CodeValue;
 import com.hand.hap.system.dto.ResponseData;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -39,8 +36,8 @@ public class FoodCuisineController extends BaseController{
     @RequestMapping(method = RequestMethod.GET)
     public ResponseData getCuisine(HttpServletRequest request,
                                    FoodCuisine foodCuisine,
-                                   int page,
-                                   int pageSize){
+                                   @RequestParam(defaultValue = DEFAULT_PAGE) int page,
+                                   @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int pageSize){
         return new ResponseData(foodCuisineService.select(createRequestContext(request),foodCuisine,page,pageSize));
     }
 

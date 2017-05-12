@@ -3,27 +3,27 @@
 <!--
   ~ #{copyright}#
   -->
-<mapper namespace="admin.food.mapper.FoodCuisineMapper">
-    <resultMap id="baseResult" type="admin.food.dto.FoodCuisine">
+<mapper namespace="admin.food.mapper.FoodTypeMapper">
+    <resultMap id="baseResult" type="admin.food.dto.FoodType">
         <id property="id" column="ID"/>
-        <result property="cuisineName" column="CUISINE_NAME"/>
-        <result property="cuisineDescription" column="CUISINE_DESCRIPTION"/>
+        <result property="typeName" column="TYPE_NAME"/>
+        <result property="typeDescription" column="CUISINE_DESCRIPTION"/>
         <result property="used" column="USED"/>
         <result property="objectVersionNumber" column="OBJECT_VERSION_NUMBER"/>
     </resultMap>
 
-    <select id="getUsedCuisine" resultMap="baseResult">
+    <select id="getUsedTypes" resultMap="baseResult">
         SELECT
             ID,
-            CUISINE_NAME,
-            CUISINE_DESCRIPTION,
+            TYPE_NAME,
+            TYPE_DESCRIPTION,
             USED,
             OBJECT_VERSION_NUMBER
         FROM
-            FOOD_CUISINE
+            FOOD_TYPE
         WHERE
             USED = 'Y'
         ORDER BY
-            CUISINE_NAME
+            `TYPE_NAME`
     </select>
 </mapper>

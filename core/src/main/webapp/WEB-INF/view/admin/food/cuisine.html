@@ -27,16 +27,18 @@
         </script>
         <div id="page-content">
             <div class="pull-left" id="toolbar-btn" style="padding-bottom:10px;">
-                <span class="btn btn-primary k-grid-add" style="float:left;margin-right:5px;" data-bind="click:createFunction"><@spring.message "hap.new"/></span>
-                <span class="btn btn-success k-grid-save-changes" data-bind="click:saveFunction" style="float:left;margin-right:5px;"><@spring.message "hap.save"/></span>
-                <span onclick="deleteData()" class="btn btn-danger" style="float:left;"><@spring.message "hap.delete"/></span>
+                <span class="btn btn-primary k-grid-add" style="float:left;margin-right:5px;" data-bind="click:createFunction"><i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hap.new"/></span>
+                <span class="btn btn-success k-grid-save-changes"  style="float:left;margin-right:5px;" data-bind="click:saveFunction"><i class="fa fa-save" style="margin-right:3px;"></i><@spring.message "hap.save"/></span>
+                <span  onclick="deleteGridData()" class="btn btn-danger" style="float:left;"><i class="fa fa-trash-o" style="margin-right:3px;"></i><@spring.message "hap.delete"/></span>
             </div>
             <script>kendo.bind($('#toolbar-btn'), viewModel);</script>
             <div class="pull-right" id="query-form" style="padding-bottom:10px;">
                 <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;" placeholder='<@spring.message "Cuisine.cuisineName"/>'
                        data-bind="value:model.cuisineName" class="k-textbox">
-                <span class="btn btn-default" data-bind="click:resetForm" style="width: 80px;float:left;margin-right:5px;" type="button"><i class="fa fa-undo" style="margin-right:3px;"></i><@spring.message "hap.reset"/></span>
+                <input type="text" data-role="maskedtextbox" style="float:left;width:300px;margin-right:5px;" placeholder='<@spring.message "cuisine.cuisineDescription"/>'
+                       data-bind="value:model.cuisineDescription" class="k-textbox">
                 <span class="btn btn-primary" style="float:left;width:70px" data-bind="click:queryResource" type="submit"><@spring.message "hap.query"/></span>
+                <span class="btn btn-default" data-bind="click:resetForm" style="width: 80px;float:left;margin-right:5px;" type="button"><i class="fa fa-undo" style="margin-right:3px;"></i><@spring.message "hap.reset"/></span>
                 <div style="clear:both"></div>
             </div>
             <script>kendo.bind($('#query-form'), viewModel);</script>
@@ -136,7 +138,7 @@
                 ],
             });
 
-            function deleteData() {
+            function deleteGridData() {
 
                 Hap.deleteGridSelection({
                     grid: $('#grid')
@@ -151,6 +153,7 @@
     </div>
     <!--菜品种类管理标签-->
     <div id="type">
+        <div style="height: 8px;"></div>
         <script type="text/javascript">
             var typeViewModel = kendo.observable({
                 model: {},
@@ -173,15 +176,17 @@
         </script>
         <div id="type-page-content">
             <div class="pull-left" id="type-toolbar-btn" style="padding-bottom:10px;">
-                <span class="btn btn-primary k-grid-add" style="float:left;margin-right:5px;" data-bind="click:createFunction"><@spring.message "hap.new"/></span>
-                <span class="btn btn-success k-grid-save-changes" data-bind="click:saveFunction" style="float:left;margin-right:5px;"><@spring.message "hap.save"/></span>
-                <span onclick="deleteData()" class="btn btn-danger" style="float:left;"><@spring.message "hap.delete"/></span>
+                <span class="btn btn-primary k-grid-add" style="float:left;margin-right:5px;" data-bind="click:createFunction"><i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message "hap.new"/></span>
+                <span class="btn btn-success k-grid-save-changes"  style="float:left;margin-right:5px;" data-bind="click:saveFunction"><i class="fa fa-save" style="margin-right:3px;"></i><@spring.message "hap.save"/></span>
+                <span  onclick="deleteData()" class="btn btn-danger" style="float:left;margin-right:5px;"><i class="fa fa-trash-o" style="margin-right:3px;"></i><@spring.message "hap.delete"/></span>
             </div>
             <script>kendo.bind($('#type-toolbar-btn'), typeViewModel);</script>
             <div class="pull-right" id="type-query-form" style="padding-bottom:10px;">
                 <input type="text" data-role="maskedtextbox" style="float:left;width:150px;margin-right:5px;" placeholder='<@spring.message "Type.typeName"/>'
                        data-bind="value:model.typeName" class="k-textbox">
-                <span class="btn btn-primary" style="float:left;width:70px" data-bind="click:queryFunction" type="submit"><@spring.message "hap.query"/></span>
+                <input type="text" data-role="maskedtextbox" style="float:left;width:300px;margin-right:5px;" placeholder='<@spring.message "Type.typeDescription"/>'
+                       data-bind="value:model.typeDescription" class="k-textbox">
+                <span class="btn btn-primary" style="float:left;width:80px" data-bind="click:queryFunction" type="submit"><@spring.message "hap.query"/></span>
                 <span class="btn btn-default" data-bind="click:resetForm" style="width: 80px;float:left;margin-right:5px;" type="button"><i class="fa fa-undo" style="margin-right:3px;"></i><@spring.message "hap.reset"/></span>
                 <div style="clear:both"></div>
             </div>

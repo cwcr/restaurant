@@ -31,4 +31,18 @@ public interface IFoodDishesTypeService {
      * @param dishes
      */
     void batchDeleteAboutDishes(List<FoodDishes> dishes);
+
+    /**
+     * 根据菜品id获取该菜品的所属类型
+     * @param dishesId
+     * @return 类型id列表
+     */
+    List<Long> getAllTypesByDishesId(Long dishesId);
+
+    /**
+     * 更新菜品和类型的关联关系
+     * @param dishesId
+     * @param types
+     */
+    void updateTypesByDishesId(Long dishesId,List<Long> types);
 }

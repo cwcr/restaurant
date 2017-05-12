@@ -16,4 +16,11 @@ public interface IFoodDishesService extends IBaseService<FoodDishes>{
      * @return 对应菜系下的所有菜品
      */
     List<FoodDishes> selectFoodDishesInThisCuisine(FoodCuisine foodCuisine);
+
+    /**
+     * 单一菜品保存
+     * @param foodDishes 菜品
+     * @param types 菜品对应的类型
+     */
+    public void updateOneDishes(FoodDishes foodDishes,List<Long> types);
 }

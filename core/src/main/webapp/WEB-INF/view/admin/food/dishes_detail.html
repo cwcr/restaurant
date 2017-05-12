@@ -1,5 +1,205 @@
 <#include "../../include/header.html">
 <body>
+<script>
+    var id=${RequestParameters.id!0};
+    var baseDishesPath="${base.contextPath}/food/dishes/one";
+    var baseDishTypePath="${base.contextPath}/food/dish_type";
+    var baseTypePath="${base.contextPath}/food/type"
+    var cuisines={};
+    var viewModel=kendo.observable({
+        model: {},
+        resetForm:function () {
+            updateViewModel();
+        },
+        saveFunction:function () {
+            console.log(viewModel.model);
+            viewModel.model.types=types.value();
+            $.ajax({
+                url:baseDishesPath,
+                method:"POST",
+                dataType:"json",
+                contentType:"application/json",
+                data:JSON.stringify(viewModel.model),
+                success:function (data) {
+                    kendo.ui.showInfoDialog({
+                        message:"保存成功"
+                    }).done(function () {
+                        window.parent.$("#dialogDetail").data("kendoWindow").close();
+                    })
+                }
+            })
+        }
+    })
 
+    function updateCuisines() {
+        $.ajax({
+            url:"${base.contextPath}/food/cuisine/all",
+            method:"GET",
+            async:false,
+            success:function (data) {
+                cuisines=data.rows;
+            }
+        })
+        return cuisines;
+    }
+    $(document).ready(function () {
+        updateCuisines();
+        updateViewModel();
+    })
+
+    function updateViewModel() {
+        $.ajax({
+            url:baseDishesPath,
+            method:"GET",
+            async:false,
+            dataType:"json",
+            data:{id:id},
+            success:function (data) {
+                viewModel.model=data;
+            }
+        })
+        $.ajax({
+            url:baseDishTypePath,
+            method:"GET",
+            async:false,
+            dataType:"json",
+            data:{dishesId:id},
+            success:function (data) {
+                viewModel.model.types=data.rows;
+            }
+        })
+        types.value(viewModel.model.types);
+        $('#cuisineId').data('kendoDropDownList').setDataSource(cuisines);
+        kendo.bind($('#page-content'), viewModel);
+    }
+</script>
+
+<div class="row" style="height: 100%;" id="page-content">
+    <div class="col-xs-2"></div>
+    <div class="col-xs-6">
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label for="foodName" class="col-sm-2 control-label">菜品名</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="foodName" placeholder="请输入菜品名"
+                           required name="菜品名" data-bind="value:model.foodName"/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="foodDescription" class="col-sm-2 control-label">菜品描述</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="foodDescription" placeholder="请输入菜品描述"
+                           name="菜品描述" data-bind="value:model.foodDescription"/>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="cuisineId" class="col-sm-2 control-label">菜系</label>
+                <div class="col-sm-10">
+                    <input id="cuisineId" placeholder='展示方式' type="text" style="width: 100%" data-bind="value:model.cuisineId">
+                    <script>
+                        var cuisineList=$('#cuisineId').kendoDropDownList({
+                            dataTextField: "meaning",
+                            dataValueField: "value",
+                            dataSource: cuisines,
+                            optionLabel: {
+                                meaning: "无菜系",
+                                value: ""
+                            },
+                            open:function (e) {
+                                updateCuisines();
+                                $('#cuisineId').data('kendoDropDownList').setDataSource(cuisines);
+                            }
+                        }).data('kendoDropDownList')
+                    </script>
+                </div>
+            </div>
+
+            <div class="form-group" style="height: 50px;">
+                <label for="types" class="col-sm-2 control-label">类型</label>
+                <div class="col-sm-10"  style="height: 29px">
+                    <select id="types" style="width: 100%;"></select>
+                </div>
+            </div>
+            <script>
+                var types=$('#types').kendoMultiSelect({
+                    placeholder: "选择菜品类型...",
+                    dataSource:{
+                        transport:{
+                            read:{
+                                url: baseTypePath + "/all",
+                            }
+                        }
+                    },
+                    dataTextField: "typeName",
+                    dataValueField: "id"
+                }).data("kendoMultiSelect");
+            </script>
+
+            <div class="form-group">
+                <label for="foodPrice" class="col-sm-2 control-label">价钱</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" id="foodPrice"
+                           name="价钱" data-bind="value:model.foodPrice" style="width:100%"/>
+                </div>
+                <label for="foodSpecialPrice" class="col-sm-2 control-label">特价</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" id="foodSpecialPrice"
+                           name="特价" data-bind="value:model.foodSpecialPrice" style="width:100%"/>
+                </div>
+            </div>
+            <script>
+                $('#foodPrice').kendoNumericTextBox({
+                    format: "c",
+                    min:0
+                });
+                $('#foodSpecialPrice').kendoNumericTextBox({
+                    format: "c",
+                    min:0
+                });
+            </script>
+
+            <div class="form-group">
+                <label for="used" class="col-sm-2 control-label">启用菜品</label>
+                <div class="col-sm-4" style="margin-top: 5px">
+                    <input id="used"  name="used"
+                           type="checkbox" data-bind="enabled: isEnabled,value:model.used" />
+                </div>
+                <label for="usedSpecial" class="col-sm-2 control-label">启用特价</label>
+                <div class="col-sm-4" style="margin-top: 5px">
+                    <input id="usedSpecial"  name="usedSpecial"
+                           type="checkbox" data-bind="enabled: isEnabled,value:model.usedSpecial" />
+                </div>
+                <script>
+                    $('#used').kendoCheckbox({
+                        checkedValue: 'Y',
+                        uncheckedValue: 'N'
+                    });
+                    $('#usedSpecial').kendoCheckbox({
+                        checkedValue: 'Y',
+                        uncheckedValue: 'N'
+                    });
+                </script>
+            </div>
+
+            <div class="form-group" style="display: none">
+                <label for="foodPicture" class="col-sm-2 control-label">菜品图片</label>
+                <input type="image" id="foodPicture" data-bind="value:model.foodPicture">
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-2">
+
+                </div>
+                <div class="col-sm-4">
+                    <span class="btn btn-success k-grid-save-changes"  style="width: 80px; float:left;margin-right:5px;" data-bind="click:saveFunction"><i class="fa fa-save" style="margin-right:3px;"></i><@spring.message "hap.save"/></span>
+                    <span class="btn btn-default" data-bind="click:resetForm" style="width: 80px;float:left;margin-right:5px;" type="button"><i class="fa fa-undo" style="margin-right:3px;"></i><@spring.message "hap.reset"/></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xs-4"></div>
+</div>
 </body>
 </html>

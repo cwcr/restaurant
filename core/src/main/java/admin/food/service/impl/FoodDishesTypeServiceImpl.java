@@ -60,4 +60,22 @@ public class FoodDishesTypeServiceImpl implements IFoodDishesTypeService {
             }
         }
     }
+    /**
+     * 根据菜品id获取该菜品的所属类型
+     * @param dishesId
+     * @return 类型id列表
+     */
+    public List<Long> getAllTypesByDishesId(Long dishesId){
+        return mapper.getAllTypesByDishesId(dishesId);
+    }
+
+    /**
+     * 更新菜品和类型的关联关系
+     * @param dishesId
+     * @param types
+     */
+    public void updateTypesByDishesId(Long dishesId,List<Long> types){
+        deleteAboutDishes(dishesId);
+        mapper.insertTypesByDishesId(dishesId,types);
+    }
 }

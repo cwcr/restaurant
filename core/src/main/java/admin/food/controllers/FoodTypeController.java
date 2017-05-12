@@ -46,4 +46,14 @@ public class FoodTypeController extends BaseController {
         foodDishesTypeService.batchDeleteAboutType(dto);
         return new ResponseData();
     }
+    /**
+     * 返回List<CodeValue> 匹配类型 id/name
+     * 应该返回启用的菜系
+     * @param request
+     * @return
+     */
+    @RequestMapping(path = "/all",method = RequestMethod.GET)
+    public List<FoodType> allDishes(HttpServletRequest request){
+        return foodTypeService.getUsedTypes();
+    }
 }

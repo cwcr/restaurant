@@ -19,4 +19,21 @@
         WHERE
             DISHES_ID = #{id}
     </delete>
+
+    <select id="getAllTypesByDishesId" parameterType="java.lang.Long" resultType="java.lang.Long">
+        SELECT
+            TYPE_ID
+        FROM
+            FOOD_DISHES_TYPE
+        WHERE
+            DISHES_ID = #{dishesId}
+    </select>
+
+    <insert id="insertTypesByDishesId">
+        INSERT INTO FOOD_DISHES_TYPE(DISHES_ID,TYPE_ID)
+        VALUES
+        <foreach collection="types" item="item" separator=",">
+            (#{dishesId},#{item})
+        </foreach>
+    </insert>
 </mapper>

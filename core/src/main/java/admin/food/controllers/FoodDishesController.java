@@ -38,4 +38,15 @@ public class FoodDishesController extends BaseController{
         return new ResponseData();
     }
 
+    @RequestMapping(path = "/one",method = RequestMethod.GET)
+    public FoodDishes getOneById(HttpServletRequest request,FoodDishes foodDishes){
+        return foodDishesService.selectByPrimaryKey(createRequestContext(request), foodDishes);
+    }
+
+    @RequestMapping(path = "/one",method = RequestMethod.POST)
+    public ResponseData saveOneById(HttpServletRequest request,
+                                  @RequestBody FoodDishes foodDishes){
+        foodDishesService.updateOneDishes(foodDishes,foodDishes.getTypes());
+        return new ResponseData();
+    }
 }
