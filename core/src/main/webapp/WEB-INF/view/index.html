@@ -1,4 +1,10 @@
-﻿<#include "./include/header.html">
+﻿<#--
+        * description: 主界面
+        * author:wangye_shine@163.com
+        * version: 1.0
+        *
+        -->
+<#include "./include/header.html">
 <body class="" style="padding:0px; overflow: hidden;">
     <script src="${base.contextPath}/lib/bootstrap-3.3.7/js/bootstrap.min.js"></script>
     
@@ -416,7 +422,7 @@
     <div id="navbar-container">
         <div id="navbar-logo">
             <img class="navbar-logo-img" height="28"  src="${base.contextPath}/resources/upload/logo.png" />
-            <div class="navbar-logo-title">${SYS_TITLE!'Hand Application Platform'}</div>
+            <div class="navbar-logo-title">${SYS_TITLE!'餐饮管理系统'}</div>
         </div>
         <form id="langForm" action="" style="display: inline-block" method="GET" autocomplete="off">
             <input type="hidden" name="lang"/>
@@ -690,7 +696,7 @@
         		contextMenu : true
         	}).data("kendoTabStrip");
             $("#mainTab").parent().attr("id", "tabstrip-parent");
-            window.top.openTab('home', '<@spring.message "hap.home"/>', 'home.html', false);
+            window.top.openTab('home', '<@spring.message "hap.home"/>', 'home1.html', false);
             initSize();
             $(window).on("resize", initSize);
             loadMenu();
@@ -698,7 +704,7 @@
         
         init();
     </script>
-    <form id="logoutForm" method="post" target="_self" action="${base.contextPath}/logout" style="display: none;">
+    <form id="logoutForm" method="post" target="_self" action="${base.contextPath}/logout" style="mob_spawnerdisplay: none;">
         <input name="${_csrf.parameterName}" value="${_csrf.token}"/>
         <input type="submit"/>
     </form>

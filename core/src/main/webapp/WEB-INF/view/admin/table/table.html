@@ -1,10 +1,192 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
+<#--
+        * description: 餐桌维护页面
+        * author:wangye_shine@163.com
+        * version: 1.0
+        *
+        -->
+<#include "../../include/header.html">
 <body>
-$END$
+<script src="${base.contextPath}/common/code?tableStatuses=TABLE.STATUS"></script>
+<script>
+    var viewModel=kendo.observable({
+        model:{},
+        createFunction:function () {
+            grid.addRow();
+        },
+        saveFunction:function () {
+            grid.saveChanges();
+        },
+        queryFunction:function () {
+            dataSource.read();
+        },
+        resetForm : function (e) {
+            var formData = viewModel.model.toJSON();
+            for (var k in formData) {
+                viewModel.model.set(k, null);
+            }
+        },
+        deleteData:function() {
+            Hap.deleteGridSelection({
+                grid: $('#grid')
+            });
+        }
+    });
+</script>
+<div id="page-content">
+    <div class="row">
+        <div class="pull-left" id="toolbar-btn" style="padding-bottom:10px;">
+            <span class="btn btn-primary k-grid-add" style="float:left;margin-right:5px;width: 80px;" data-bind="click:createFunction"><i class="fa fa-plus-square" style="margin-right:3px;"></i><@spring.message 'hap.new'/></span>
+            <span class="btn btn-success k-grid-save-changes"  style="float:left;margin-right:5px;width: 80px;" data-bind="click:saveFunction"><i class="fa fa-save" style="margin-right:3px;"></i><@spring.message 'hap.save'/></span>
+            <span data-bind="click:deleteData" class="btn btn-danger"style="float:left;margin-right:5px;width: 80px;"><i class="fa fa-trash-o" style="margin-right:3px;"></i><@spring.message 'hap.delete'/></span>
+        </div>
+
+        <div class="pull-right" id="query-form" style="padding-bottom:10px;">
+            <input  data-role="maskedtextbox" placeholder ="餐桌名" type="text" style="float:left;width:150px;margin-right:5px;" data-bind="value:model.tableName"/>
+            <input  data-role="maskedtextbox" id="cuisineId" placeholder ="菜系"  type="text" style="width: 150px;float:left;margin-right:5px;" data-bind="value:model.tableStatus"/>
+            <script>
+                $('#cuisineId').kendoDropDownList({
+                    dataTextField : "meaning",
+                    dataValueField: "value",
+                    dataSource    : tableStatuses,
+                    valuePrimitive:true,
+                    optionLabel:"餐桌状态",
+                    optionLabelTemplate:kendo.template('<div class="color-hint">餐桌状态</div>')
+                });
+            </script>
+            <span class="btn btn-primary" data-bind="click:queryFunction" style="float:left;margin-right:5px;width: 80px;" type="submit"><i class="fa fa-search" style="margin-right:3px;"></i><@spring.message "hap.query"/></span>
+            <span class="btn btn-default" data-bind="click:resetForm" style="float:left;margin-right:5px;width: 80px;" type="button"><i class="fa fa-undo" style="margin-right:3px;"></i><@spring.message "hap.reset"/></span>
+        </div>
+    </div>
+</div>
+<script>
+    kendo.bind($('#page-content'),viewModel)
+</script>
+<div style="clear: both">
+    <div id="grid"></div>
+</div>
+<script>
+    var basePath="${base.contextPath}/dinner/table"
+    var dataSource=new kendo.data.DataSource({
+        transport:{
+            read:{
+                url:basePath,
+                type:"GET",
+                dataType:"json"
+            },
+            create:{
+                url:basePath,
+                type:"POST",
+                dataType:"json",
+                contentType:"application/json"
+            },
+            update:{
+                url:basePath,
+                type:"POST",
+                dataType:"json",
+                contentType:"application/json"
+            },
+            destroy:{
+                url:basePath+"/delete",
+                type:"DELETE",
+                dataType:"json",
+                contentType:"application/json"
+            },
+            parameterMap:function (options,type) {
+                if(type!=='read'&&options.models){
+                    return JSON.stringify(Hap.prepareSubmitParameter(options,type));
+                }
+                else if(type==='read'){
+                    return Hap.prepareQueryParameter(viewModel.model.toJSON(),options)
+                }
+            }
+        },
+        requestEnd:function (e) {
+            if(e.type!=='read'){
+                dataSource.read();
+            }
+        },
+        batch:true,
+        serverPaging:true,
+        pageSize:10,
+        schema:{
+            data:"rows",
+            total:"total",
+            model:{
+                id:"id",
+                fields:{
+                    tableName:{validation:{required:true}},
+                    tableDescription:{},
+                    tableStatus:{validation:{required:true}},
+                    used:{type:"boolean",defaultValue:"Y",checkedValue:"Y",uncheckedValue:"N"}
+                }
+            }
+        }
+    })
+
+    var grid=$("#grid").kendoGrid({
+        dataSource:dataSource,
+        navigatable:false,
+        height:"100%",
+        resizable:true,
+        scrollable:true,
+        selectable:"multiple,rowbox",
+        editable:true,
+        sortable:true,
+        columnMenu:true,
+        pageable:{
+            pageSizes:[5,10,20,50,'All'],
+            refresh:true,
+            buttonCount:5
+        },
+        columns:[
+            {
+                field:"tableName",
+                title:"餐桌名",
+                width:"10%",
+                attributes:{style:"text-align:center"}
+            }
+            ,{
+                field:"tableDescription",
+                title:"菜品描述",
+                width:"60%",
+                attributes:{style:"text-align:center"}
+            }
+            ,{
+                field:"tableStatus",
+                title:"餐桌状态",
+                width:"8%",
+                attributes:{style:"text-align:center"},
+                template:function (dataItem) {
+                    var v=dataItem.tableStatus;
+                    $.each(tableStatuses,function (i,n) {
+                        if((n.value||'').toLowerCase()===(v||'').toLowerCase()){
+                            v=n.meaning;
+                            return false;
+                        }
+                    })
+                    return v;
+                },
+                editor:function (container, options) {
+                    $('<input name="' + options.field + '"/>')
+                            .appendTo(container)
+                            .kendoDropDownList({
+                                dataTextField: "meaning",
+                                dataValueField: "value",
+                                dataSource: tableStatuses,
+                                index:0
+                            });
+                }
+            }
+            ,{
+                field:"used",
+                title:"是否使用",
+                width:"8%",
+                attributes:{style:"text-align:center"}
+            }
+        ]
+    }).data('kendoGrid');
+
+    Hap.autoResizeGrid($("#grid"));
+</script>
 </body>
 </html>

@@ -29,6 +29,37 @@
         FROM
             FOOD_DISHES
         WHERE
-            CUISINE_ID = #{id};
+            CUISINE_ID = #{id}
+    </select>
+
+    <select id="selectDishesByConditions" resultMap="baseResult">
+        SELECT
+            ID,
+            FOOD_NAME,
+            FOOD_PICTURE,
+            FOOD_DESCRIPTION,
+            USED,
+            CUISINE_ID,
+            OBJECT_VERSION_NUMBER
+        FROM
+            FOOD_DISHES
+        WHERE
+            1=1
+        <if test="cuisineId!=null">
+            AND CUISINE_ID = #{cuisineId}
+        </if>
+        <if test="typeId!=null">
+            AND ID IN (
+                SELECT
+                DISHES_ID
+                FROM
+                food_dishes_type
+                WHERE
+                TYPE_ID = #{typeId}
+            )
+        </if>
+        <if test="foodName!=null">
+            AND FOOD_NAME = #{foodName}
+        </if>
     </select>
 </mapper>

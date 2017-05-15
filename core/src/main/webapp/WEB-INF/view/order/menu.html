@@ -1,10 +1,58 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
+<#--
+        * description: 菜单页面
+        * author:wangye_shine@163.com
+        * version: 1.0
+        *
+        -->
+<#include "../include/header.html">
 <body>
-$END$
+<style type="text/css">
+
+    .left{
+        margin: 7px;
+        width: 60%;
+        float: left;
+        position: absolute;
+        top:0px;
+        bottom: 0px;
+        left: 0px;
+        background-color: #FFFFFF;
+    }
+    #treeView{
+        height: 100%;
+    }
+
+
+    .right{
+        float: right;
+        width: 40%;
+    }
+</style>
+
+<div class="panel-body">
+    <div class="row">
+        <div class="left">
+            <div id="treeView" ></div>
+        </div>
+
+
+        <div class="right">
+            <div class="form-group">
+                <div id='grid-container'>
+                    <div id="food_grid" style="clear: both"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var dishesDataSource=new kendo.data.DataSource({});
+    var grid=$('#food_grid').kendoGrid({
+        dataSource:dishesDataSource,
+
+    })
+</script>
+
 </body>
 </html>

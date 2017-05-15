@@ -32,6 +32,17 @@ public class FoodDishes extends BaseDTO{
     private String usedSpecial;
     @Transient
     private List<Long> types;
+    @Transient
+    private Long typeId;
+
+    public Long getTypeId() {
+        return typeId;
+    }
+
+    public FoodDishes setTypeId(Long typeId) {
+        this.typeId = typeId;
+        return this;
+    }
 
     public List<Long> getTypes() {
         return types;
